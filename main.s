@@ -1,7 +1,6 @@
     .org $0000
 
     di ; Disable Interrupts
-loop:
     ;      V        Serial Output Data
     ;       V       SOD enable
     ;        V      don't care
@@ -12,10 +11,16 @@ loop:
     ;             V RST 5.5 mask
     ld a, %11000000
 
+loop:
     ; SIM (8085-only): set interrupt masks.
     .byte $30
-    jp loop
 
-    ; fill rest of ROM so minipro is happy
-    .org $7FFF
-    .byte 0
+    ; toggle SOD bit in A
+    xor   %10000000
+
+delay:
+    dec b
+    jp nz, delay
+    dec c
+    jp nz, delay
+    jp loop
